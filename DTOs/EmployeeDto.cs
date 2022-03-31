@@ -7,14 +7,16 @@ namespace LinqCrudTest.DTOs
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? LastName { get; set; }
-        public class WithCompany : EmployeeDto
+        public class WithCompanyAndPosition : EmployeeDto
         {
             public CompanyDto? Company { get; set; }
+            public PositionDto? Position { get; set; }
 
         }
-        public class WithCompanyId : EmployeeDto
+        public class WithCompanyIdAndPositionId : EmployeeDto
         {
             public int? CompanyId { get; set; }
+            public int? PositionId { get; set; }
         }
     }
 }

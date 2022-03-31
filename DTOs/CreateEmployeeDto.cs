@@ -7,5 +7,6 @@ namespace LinqCrudTest.DTOs
         public string? Name { get; set; }
         public string? LastName { get; set; }
         public int? CompanyId { get; set; }
+        public int? PositionId { get; set; }
     }
 }

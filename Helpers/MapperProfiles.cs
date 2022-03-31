@@ -14,9 +14,13 @@ namespace LinqCrudTest.Helpers
             CreateMap<Company, CompanyDto.WithEmployees>();
             // employees mapper
             CreateMap<Employee, EmployeeDto>().ReverseMap();
-            CreateMap<Employee, EmployeeDto.WithCompany>();
-            CreateMap<Employee, EmployeeDto.WithCompanyId>();
+            CreateMap<Employee, EmployeeDto.WithCompanyAndPosition>();
+            CreateMap<Employee, EmployeeDto.WithCompanyIdAndPositionId>();
             CreateMap<Employee, CreateEmployeeDto>().ReverseMap();
+
+            // positions mapper
+            CreateMap<Positions, PositionDto>().ReverseMap();
+            CreateMap<Positions, CreatePositionsDto>().ReverseMap();
         }
     }
 }

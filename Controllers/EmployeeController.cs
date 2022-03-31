@@ -20,30 +20,36 @@ namespace LinqCrudTest.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<EmployeeDto.WithCompanyId>>> Get()
+        public async Task<ActionResult<List<EmployeeDto.WithCompanyIdAndPositionId>>> Get()
         {
             var employees = await context.Employees
                 .Include(x => x.Company)
+                .Include(x => x.Position)
                 .ToListAsync();
-            return mapper.Map<List<EmployeeDto.WithCompanyId>>(employees);
+            return mapper.Map<List<EmployeeDto.WithCompanyIdAndPositionId>>(employees);
         }
 
         [HttpGet("{id:int}", Name = "getEmployeeById")]
-        public async Task<ActionResult<EmployeeDto.WithCompany>> Get(int id)
+        public async Task<ActionResult<EmployeeDto.WithCompanyAndPosition>> Get(int id)
         {
-            var employee = await context.Employees.Include(x => x.Company).FirstOrDefaultAsync(x => x.Id == id);
+            var employee = await context.Employees
+                .Include(x => x.Company)
+                .Include(x => x.Position)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (employee == null) return NotFound();
 
-            return mapper.Map<EmployeeDto.WithCompany>(employee);
+            return mapper.Map<EmployeeDto.WithCompanyAndPosition>(employee);
         }
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CreateEmployeeDto createEmployee)
         {
             var companyExist = await context.Companies.AnyAsync(x => x.Id == createEmployee.CompanyId);
-
             if (!companyExist) return BadRequest("Company ID dont exits");
+
+            var positionExist = await context.Positions.AnyAsync(x => x.Id == createEmployee.PositionId);
+            if (!positionExist) return BadRequest("Position ID dont exits");
 
             var employee = mapper.Map<Employee>(createEmployee);
 
@@ -52,22 +58,32 @@ namespace LinqCrudTest.Controllers
 
             var employeeDb = await context.Employees
                 .Include(x => x.Company)
+                .Include(x => x.Position)
                 .FirstOrDefaultAsync(x => x.Id == employee.Id);
 
-            var employeeDto = mapper.Map<EmployeeDto.WithCompany>(employeeDb);
+            var employeeDto = mapper.Map<EmployeeDto.WithCompanyAndPosition>(employeeDb);
             return new CreatedAtRouteResult("getEmployeeById", new { id = employee.Id }, employeeDto);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] CreateEmployeeDto createEmployee)
         {
-            var employee = await context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+            var companyExist = await context.Companies.AnyAsync(x => x.Id == createEmployee.CompanyId);
+            if (!companyExist) return BadRequest("Company ID dont exits");
+
+            var positionExist = await context.Positions.AnyAsync(x => x.Id == createEmployee.PositionId);
+            if (!positionExist) return BadRequest("Position ID dont exits");
+
+            var employee = await context.Employees
+                .Include(x => x.Company)
+                .Include(x => x.Position)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (employee == null) return NotFound();
 
             employee = mapper.Map(createEmployee, employee);
-            //await context.SaveChangesAsync();
-            var employeeDto = mapper.Map<EmployeeDto.WithCompany>(employee);
+            await context.SaveChangesAsync();
+            var employeeDto = mapper.Map<EmployeeDto.WithCompanyAndPosition>(employee);
             return new CreatedAtRouteResult("getEmployeeById", new { id = employee.Id }, employeeDto);
         }
 
@@ -76,7 +92,7 @@ namespace LinqCrudTest.Controllers
         {
             var employee = await context.Employees.AnyAsync(x => x.Id == id);
 
-            if(!employee) return NotFound();
+            if (!employee) return NotFound();
 
             context.Remove(new Employee() { Id = id });
             await context.SaveChangesAsync();

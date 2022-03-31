@@ -4,6 +4,7 @@ using LinqCrudTest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinqCrudTest.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220331205650_positions")]
+    partial class positions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,7 +71,7 @@ namespace LinqCrudTest.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("LinqCrudTest.Entities.Positions", b =>
+            modelBuilder.Entity("LinqCrudTest.Entities.Position", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,12 +81,11 @@ namespace LinqCrudTest.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positions");
+                    b.ToTable("Position");
                 });
 
             modelBuilder.Entity("LinqCrudTest.Entities.Employee", b =>
@@ -93,7 +94,7 @@ namespace LinqCrudTest.Migrations
                         .WithMany("Employees")
                         .HasForeignKey("CompanyId");
 
-                    b.HasOne("LinqCrudTest.Entities.Positions", "Position")
+                    b.HasOne("LinqCrudTest.Entities.Position", "Position")
                         .WithMany()
                         .HasForeignKey("PositionId");
 

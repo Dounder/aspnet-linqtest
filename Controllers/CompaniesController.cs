@@ -44,7 +44,7 @@ namespace LinqCrudTest
         {
             var company = mapper.Map<Company>(createCompany);
             context.Add(company);
-            //await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             var companyDto = mapper.Map<CompanyDto>(company);
 
             return new CreatedAtRouteResult("getCompanyById", new { id = company.Id }, companyDto);

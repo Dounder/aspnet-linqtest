@@ -7,5 +7,7 @@
         public string? LastName { get; set; }
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
+        public int? PositionId { get; set; }
+        public Positions? Position { get; set; }
     }
 }
